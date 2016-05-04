@@ -9,7 +9,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-```{r, echo=FALSE, warning=FALSE}
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
 library(dplyr)
 library(ggplot2)
 
@@ -40,12 +40,23 @@ You can also embed plots, for example:
 ```{r, echo=FALSE, dev='CairoPNG'}
 #Plot Infrastructure Intensity vs. Fiscal Capacity
 ggplot(FC2013, aes(infrastructure.intensity, fiscal.capacity, col = population.group, shape = region))+
-  geom_point(size = 4, position = "jitter", alpha = 0.8)+
+  geom_point(size = 2, position = "jitter", alpha = 0.8)+
   ggtitle("Fiscal Capacity vs. Infrastructure Intensity Under 10K")+
   geom_hline(aes(yintercept=319000), colour="red", linetype="dashed")+
   coord_fixed(1/10)+
   ylim(0,619000)+
   xlim(0,69000)
+```
+
+```{r, echo=FALSE, dev='CairoPNG'}
+#Plot Investment Urgency vs. Infrastructure Intensity 
+ggplot(FC2013, aes(investment.urgency, infrastructure.intensity, col = population.group, shape = region))+
+  geom_point(size = 2, position = "jitter", alpha = 0.8)+
+  ggtitle("Infrastructure Intensity vs. Infrastructure Intensity Under 10K")+
+  geom_hline(aes(yintercept=31000), colour= "red", linetype="dashed")+
+  coord_fixed(1/69000)+
+  ylim(0, 69000)+
+  xlim(0, 1)
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
