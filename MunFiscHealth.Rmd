@@ -1,0 +1,51 @@
+---
+title: "Fiscal Health Indicators"
+author: "Colin Macdonald"
+date: "May 4, 2016"
+output: word_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r, echo=FALSE}
+library(dplyr)
+library(ggplot2)
+
+#load FIR data
+load("fir.RDA")
+
+FC2013 <- fir %>%
+  mutate("population" = as.numeric(slc.02.41.01),
+         "population.group" = cut(population, 
+                                  breaks = c(0,2500,5000, 7500,10000,10000000), #define population breaks
+                                  labels=c("<2.5k","2.5-5k","5k-7.5K","7.5k-10k","Big"), #name population breaks
+                                  ordered_result=TRUE),
+         "households" = as.numeric(slc.02.40.01),
+         "TCAs" = slc.51.9910.06, "weighted.assessment" = slc.261.9199.17,
+         "fiscal.capacity" = weighted.assessment/households,
+         "infrastructure.intensity" = TCAs/households,
+         "investment.urgency" = slc.51.9910.10/TCAs) %>%
+  filter(MARSYEAR == 2013, #filter by FIR year
+        population.group != "Big" #filter by population group
+         ) %>%
+  select(MUNID, LT1NAME, MUNTIER, MARSYEAR, region, population.group, fiscal.capacity, 
+         infrastructure.intensity, investment.urgency) %>%
+  na.omit()
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE, dev='CairoPNG', comment=FALSE}
+#Plot Infrastructure Intensity vs. Fiscal Capacity
+ggplot(FC2013, aes(infrastructure.intensity, fiscal.capacity, col = population.group, shape = region))+
+  geom_point(size = 4, position = "jitter", alpha = 0.8)+
+  ggtitle("Fiscal Capacity vs. Infrastructure Intensity Under 10K")+
+  geom_hline(aes(yintercept=319000), colour="red", linetype="dashed")+
+  coord_fixed(1/10)+
+  ylim(0,619000)+
+  xlim(0,69000)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
